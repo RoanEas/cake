@@ -6,6 +6,37 @@ if (!isset($_SESSION['user_id'])) {
     header("Location: login.php?redirect=checkout.php&require_login=1");
     exit;
 }
+
+// Fetch saved addresses from database
+$user_id = $_SESSION['user_id'];
+$saved_addresses = [];
+try {
+    $stmt_user = $pdo->prepare("SELECT address FROM users WHERE id = ?");
+    $stmt_user->execute([$user_id]);
+    $user_data = $stmt_user->fetch(PDO::FETCH_ASSOC);
+    if (!empty($user_data['address'])) {
+        $saved_addresses = json_decode($user_data['address'], true);
+        if (!is_array($saved_addresses)) {
+            $saved_addresses = [];
+        }
+    }
+} catch (PDOException $e) {
+    // Ignore DB error
+}
+
+$initial_address = '';
+if (!empty($saved_addresses)) {
+    foreach ($saved_addresses as $addr) {
+        if ($addr['is_default']) {
+            $initial_address = $addr['text'];
+        }
+    }
+    if (empty($initial_address)) {
+        $initial_address = $saved_addresses[0]['text'];
+    }
+} else {
+    $initial_address = $_SESSION['user_address'] ?? '';
+}
 ?>
 <!DOCTYPE html>
 <html lang="th">
@@ -117,9 +148,22 @@ if (!isset($_SESSION['user_id'])) {
                     <input type="tel" name="phone" class="form-control" placeholder="ระบุเบอร์โทรศัพท์" value="<?= htmlspecialchars($_SESSION['user_phone'] ?? '') ?>" required>
                 </div>
                 
+                <?php if(!empty($saved_addresses)): ?>
+                    <div class="form-group">
+                        <label>เลือกที่อยู่จัดส่งที่บันทึกไว้</label>
+                        <select class="form-control" onchange="useSavedAddress(this)" style="margin-bottom: 0.5rem; background-color: var(--secondary-color); cursor: pointer; border-radius: 8px;">
+                            <?php foreach($saved_addresses as $addr): ?>
+                                <option value="<?= htmlspecialchars($addr['text']) ?>" <?= $addr['is_default'] ? 'selected' : '' ?>>
+                                    🏡 <?= htmlspecialchars($addr['name']) ?> (<?= htmlspecialchars(mb_strimwidth($addr['text'], 0, 45, '...')) ?>)
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+                <?php endif; ?>
+                
                 <div class="form-group">
                     <label>ที่อยู่จัดส่ง / สถานที่จัดงาน</label>
-                    <textarea name="address" class="form-control" rows="3" placeholder="ระบุที่อยู่ บ้านเลขที่ ซอย ถนน แขวง เขต อย่างละเอียด" required><?= htmlspecialchars($_SESSION['user_address'] ?? '') ?></textarea>
+                    <textarea name="address" class="form-control" rows="3" placeholder="ระบุที่อยู่ บ้านเลขที่ ซอย ถนน แขวง เขต อย่างละเอียด" required><?= htmlspecialchars($initial_address) ?></textarea>
                 </div>
                 
                 <div class="form-group">
@@ -348,6 +392,13 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 });
+
+function useSavedAddress(select) {
+    const textarea = document.querySelector('textarea[name="address"]');
+    if (textarea) {
+        textarea.value = select.value;
+    }
+}
 </script>
 </body>
 </html>

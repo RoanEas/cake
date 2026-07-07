@@ -170,7 +170,11 @@ try {
             PRIMARY KEY (id)
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
 
-        // Seed default reviews if reviews table is empty
+        // Add profile_pic column to users table if not exists
+        $stmt = $pdo->query("SHOW COLUMNS FROM users LIKE 'profile_pic'");
+        if (!$stmt->fetch()) {
+            $pdo->exec("ALTER TABLE users ADD COLUMN profile_pic VARCHAR(255) DEFAULT NULL");
+        }
         $stmt_rev_count = $pdo->query("SELECT COUNT(*) FROM reviews");
         if ($stmt_rev_count->fetchColumn() == 0) {
             $pdo->exec("INSERT INTO reviews (customer_name, rating, comment) VALUES 
