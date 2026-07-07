@@ -103,17 +103,17 @@ require_once 'config.php';
 
                 <div class="form-group">
                     <label>ชื่อ-นามสกุล ผู้รับ</label>
-                    <input type="text" name="customer_name" class="form-control" placeholder="ระบุชื่อผู้รับเค้ก" required>
+                    <input type="text" name="customer_name" class="form-control" placeholder="ระบุชื่อผู้รับเค้ก" value="<?= htmlspecialchars($_SESSION['username'] ?? '') ?>" required>
                 </div>
                 
                 <div class="form-group">
                     <label>เบอร์โทรศัพท์ติดต่อ</label>
-                    <input type="tel" name="phone" class="form-control" placeholder="ระบุเบอร์โทรศัพท์" required>
+                    <input type="tel" name="phone" class="form-control" placeholder="ระบุเบอร์โทรศัพท์" value="<?= htmlspecialchars($_SESSION['user_phone'] ?? '') ?>" required>
                 </div>
                 
                 <div class="form-group">
                     <label>ที่อยู่จัดส่ง / สถานที่จัดงาน</label>
-                    <textarea name="address" class="form-control" rows="3" placeholder="ระบุที่อยู่ บ้านเลขที่ ซอย ถนน แขวง เขต อย่างละเอียด" required></textarea>
+                    <textarea name="address" class="form-control" rows="3" placeholder="ระบุที่อยู่ บ้านเลขที่ ซอย ถนน แขวง เขต อย่างละเอียด" required><?= htmlspecialchars($_SESSION['user_address'] ?? '') ?></textarea>
                 </div>
                 
                 <div class="form-group">

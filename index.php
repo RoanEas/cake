@@ -144,9 +144,20 @@ $line_url = "https://line.me/R/ti/p/@" . $clean_line_id;
         <a href="index.php">หน้าแรก</a>
         <a href="#products">เค้กทั้งหมด</a>
         <a href="#contact">ติดต่อเรา / สาขา</a>
-        <a href="#" id="cart-toggle-nav" style="display: flex; align-items: center; gap: 0.4rem; font-weight: 500;">
+        <a href="#" id="cart-toggle-nav" style="display: flex; align-items: center; gap: 0.4rem; font-weight: 500; margin-right: 0.8rem;">
             🛒 ตะกร้าสินค้า (<span id="cart-count-nav">0</span>)
         </a>
+        
+        <!-- User Login/Register Tabber -->
+        <span class="user-auth-nav" style="border-left: 1.5px solid var(--border-color, #f1e1e1); padding-left: 0.8rem; display: inline-flex; align-items: center; gap: 0.8rem;">
+            <?php if(isset($_SESSION['user_id'])): ?>
+                <span style="font-size: 0.85rem; color: var(--text-main); font-weight: 500;">👋 สวัสดี, <?= htmlspecialchars($_SESSION['username']) ?></span>
+                <a href="logout.php" style="font-size: 0.85rem; color: var(--text-light); font-weight: 500;">ออกจากระบบ</a>
+            <?php else: ?>
+                <a href="login.php" class="btn btn-secondary btn-line" style="padding: 0.35rem 0.9rem; font-size: 0.8rem; box-shadow: none; border-radius: 20px; text-decoration: none;">เข้าสู่ระบบ</a>
+                <a href="register.php" class="btn" style="padding: 0.35rem 0.9rem; font-size: 0.8rem; border-radius: 20px; box-shadow: none; color: white; text-decoration: none;">สมัครสมาชิก</a>
+            <?php endif; ?>
+        </span>
     </nav>
 </header>
 

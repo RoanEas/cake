@@ -158,6 +158,18 @@ try {
             PRIMARY KEY (id)
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
 
+        // Create users table if not exists
+        $pdo->exec("CREATE TABLE IF NOT EXISTS users (
+            id INT(11) NOT NULL AUTO_INCREMENT,
+            username VARCHAR(100) NOT NULL UNIQUE,
+            password VARCHAR(255) NOT NULL,
+            email VARCHAR(100) DEFAULT NULL,
+            phone VARCHAR(50) DEFAULT NULL,
+            address TEXT DEFAULT NULL,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            PRIMARY KEY (id)
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+
         // Seed default reviews if reviews table is empty
         $stmt_rev_count = $pdo->query("SELECT COUNT(*) FROM reviews");
         if ($stmt_rev_count->fetchColumn() == 0) {
