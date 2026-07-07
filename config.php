@@ -175,6 +175,18 @@ try {
         if (!$stmt->fetch()) {
             $pdo->exec("ALTER TABLE users ADD COLUMN profile_pic VARCHAR(255) DEFAULT NULL");
         }
+
+        // Add role column to users table if not exists
+        $stmt = $pdo->query("SHOW COLUMNS FROM users LIKE 'role'");
+        if (!$stmt->fetch()) {
+            $pdo->exec("ALTER TABLE users ADD COLUMN role VARCHAR(50) DEFAULT 'member'");
+        }
+
+        // Add role column to admin table if not exists
+        $stmt = $pdo->query("SHOW COLUMNS FROM admin LIKE 'role'");
+        if (!$stmt->fetch()) {
+            $pdo->exec("ALTER TABLE admin ADD COLUMN role VARCHAR(50) DEFAULT 'admin'");
+        }
         $stmt_rev_count = $pdo->query("SELECT COUNT(*) FROM reviews");
         if ($stmt_rev_count->fetchColumn() == 0) {
             $pdo->exec("INSERT INTO reviews (customer_name, rating, comment) VALUES 

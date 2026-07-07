@@ -36,6 +36,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $_SESSION['user_email'] = $user['email'];
                 $_SESSION['user_phone'] = $user['phone'];
                 $_SESSION['user_address'] = $user['address'];
+                $_SESSION['role'] = !empty($user['role']) ? $user['role'] : 'member';
                 
                 $success_msg = 'เข้าสู่ระบบสำเร็จ! ยินดีต้อนรับกลับนะคะ...';
                 $redirect_target = !empty($_GET['redirect']) ? $_GET['redirect'] : 'index.php';
