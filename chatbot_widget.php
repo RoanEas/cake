@@ -304,6 +304,8 @@
     cursor: pointer;
     transition: var(--transition);
     font-weight: 500;
+    flex-shrink: 0;
+    white-space: nowrap;
 }
 .suggestion-btn:hover {
     border-color: var(--primary-color);
