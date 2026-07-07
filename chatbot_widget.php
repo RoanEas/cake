@@ -290,6 +290,7 @@
     border-top: 1px solid var(--border-color);
     white-space: nowrap;
     scrollbar-width: none; /* Hide scrollbar for Firefox */
+    align-items: center;
 }
 .chatbot-suggestions::-webkit-scrollbar {
     display: none; /* Hide scrollbar for Chrome, Safari and Opera */
@@ -297,7 +298,7 @@
 .suggestion-btn {
     background-color: #fff;
     border: 1px solid var(--border-color);
-    padding: 0.4rem 0.8rem;
+    padding: 0 0.9rem;
     border-radius: 50px;
     font-size: 0.8rem;
     color: var(--text-muted);
@@ -306,6 +307,11 @@
     font-weight: 500;
     flex-shrink: 0;
     white-space: nowrap;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1.2;
+    height: 32px;
 }
 .suggestion-btn:hover {
     border-color: var(--primary-color);
