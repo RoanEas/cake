@@ -189,8 +189,16 @@ for ($i = 1; $i <= 3; $i++) {
         
         <!-- User Login/Register Tabber -->
         <span class="user-auth-nav" style="border-left: 1.5px solid var(--border-color, #f1e1e1); padding-left: 0.8rem; display: inline-flex; align-items: center; gap: 0.8rem;">
-            <?php if(isset($_SESSION['user_id'])): ?>
-                <a href="profile.php" style="font-size: 0.85rem; color: var(--text-main); font-weight: 500; text-decoration: none; transition: color 0.2s;" onmouseover="this.style.color='var(--primary-color)'" onmouseout="this.style.color='var(--text-main)'">👋 สวัสดี, <?= htmlspecialchars($_SESSION['username']) ?></a>
+            <?php if(isset($_SESSION['user_id'])): 
+                $nav_avatar = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="30" height="30"><rect width="100" height="100" rx="15" fill="%23ffe6eb"/><circle cx="50" cy="40" r="20" fill="%23f7a8b8"/><path d="M20 80c0-15 15-25 30-25s30 10 30 25z" fill="%23f7a8b8"/></svg>';
+                if (!empty($_SESSION['profile_pic']) && file_exists($_SESSION['profile_pic'])) {
+                    $nav_avatar = $_SESSION['profile_pic'];
+                }
+            ?>
+                <a href="profile.php" style="display: inline-flex; align-items: center; gap: 0.5rem; font-size: 0.85rem; color: var(--text-main); font-weight: 500; text-decoration: none; transition: color 0.2s;" onmouseover="this.style.color='var(--primary-color)'" onmouseout="this.style.color='var(--text-main)'">
+                    <img src="<?= htmlspecialchars($nav_avatar) ?>" style="width: 30px; height: 30px; object-fit: cover; border-radius: 6px; border: 1.5px solid var(--primary-color);" alt="Profile">
+                    <span>สวัสดี, <?= htmlspecialchars($_SESSION['username']) ?></span>
+                </a>
                 <a href="logout.php" style="font-size: 0.85rem; color: var(--text-light); font-weight: 500;">ออกจากระบบ</a>
             <?php else: ?>
                 <a href="login.php" class="btn btn-secondary btn-line" style="padding: 0.35rem 0.9rem; font-size: 0.8rem; box-shadow: none; border-radius: 20px; text-decoration: none;">เข้าสู่ระบบ</a>

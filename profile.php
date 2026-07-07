@@ -203,7 +203,7 @@ $avatar_url = !empty($user['profile_pic']) && file_exists($user['profile_pic']) 
             position: relative;
             width: 150px;
             height: 150px;
-            border-radius: 50%;
+            border-radius: 12px;
             overflow: hidden;
             border: 4px solid #fff;
             box-shadow: 0 4px 15px rgba(247, 168, 184, 0.2);
@@ -434,7 +434,16 @@ $avatar_url = !empty($user['profile_pic']) && file_exists($user['profile_pic']) 
         
         <!-- User Profile Nav -->
         <span class="user-auth-nav" style="border-left: 1.5px solid var(--border-color, #f1e1e1); padding-left: 0.8rem; display: inline-flex; align-items: center; gap: 0.8rem;">
-            <a href="profile.php" style="font-size: 0.85rem; color: var(--primary-color); font-weight: 600; text-decoration: none;">👋 สวัสดี, <?= htmlspecialchars($_SESSION['username']) ?></a>
+            <?php 
+                $nav_avatar = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="30" height="30"><rect width="100" height="100" rx="15" fill="%23ffe6eb"/><circle cx="50" cy="40" r="20" fill="%23f7a8b8"/><path d="M20 80c0-15 15-25 30-25s30 10 30 25z" fill="%23f7a8b8"/></svg>';
+                if (!empty($_SESSION['profile_pic']) && file_exists($_SESSION['profile_pic'])) {
+                    $nav_avatar = $_SESSION['profile_pic'];
+                }
+            ?>
+            <a href="profile.php" style="display: inline-flex; align-items: center; gap: 0.5rem; font-size: 0.85rem; color: var(--primary-color); font-weight: 600; text-decoration: none;">
+                <img src="<?= htmlspecialchars($nav_avatar) ?>" style="width: 30px; height: 30px; object-fit: cover; border-radius: 6px; border: 1.5px solid var(--primary-color);" alt="Profile">
+                <span>สวัสดี, <?= htmlspecialchars($_SESSION['username']) ?></span>
+            </a>
             <a href="logout.php" style="font-size: 0.85rem; color: var(--text-light); font-weight: 500;">ออกจากระบบ</a>
         </span>
     </nav>
