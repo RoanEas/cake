@@ -114,7 +114,32 @@ if ($http_code === 200 && !empty($response)) {
     $res_data = json_decode($response, true);
     $reply = $res_data['choices'][0]['message']['content'] ?? '';
     if (!empty($reply)) {
-        echo json_encode(['reply' => $reply]);
+        // Find mentioned products to recommend dynamically
+        $recommended_products = [];
+        try {
+            $stmt_all = $pdo->query("SELECT id, name, price, description, image FROM products");
+            $all_products = $stmt_all->fetchAll(PDO::FETCH_ASSOC);
+            
+            foreach ($all_products as $p) {
+                // Case-insensitive search of product name in the reply
+                if (mb_stripos($reply, $p['name']) !== false) {
+                    $recommended_products[] = [
+                        'id' => $p['id'],
+                        'name' => $p['name'],
+                        'price' => (float)$p['price'],
+                        'image' => $p['image'],
+                        'description' => $p['description']
+                    ];
+                }
+            }
+        } catch (PDOException $e) {
+            // Ignore DB errors in recommendation scanner
+        }
+        
+        echo json_encode([
+            'reply' => $reply,
+            'products' => $recommended_products
+        ]);
     } else {
         echo json_encode(['reply' => 'ขอโทษด้วยนะคะ น้องไนท์มึนหัวนิดหน่อย รบกวนถามอีกครั้งได้ไหมคะ? 🥺🍰']);
     }

@@ -320,6 +320,19 @@
     transform: translateY(-1px);
 }
 
+/* Chatbot Product Recommendation Cards */
+.chatbot-products-container::-webkit-scrollbar {
+    display: none !important;
+}
+.chatbot-product-card:hover {
+    transform: translateY(-2px);
+    border-color: var(--primary-color) !important;
+    box-shadow: 0 4px 12px rgba(247, 168, 184, 0.15) !important;
+}
+.chatbot-product-btn:hover {
+    background-color: var(--primary-hover) !important;
+}
+
 /* Typing indicator */
 .typing-indicator {
     display: flex;
@@ -542,6 +555,30 @@ function executeSendMessage(text) {
             </div>
         `;
         messagesContainer.insertAdjacentHTML('beforeend', botMsgHTML);
+        
+        // If there are recommended products, append them as cards!
+        if (data.products && data.products.length > 0) {
+            let productsHTML = `
+                <div class="chatbot-products-container" style="display: flex; gap: 0.8rem; padding: 0.5rem 0.2rem; overflow-x: auto; margin-top: 0.5rem; margin-bottom: 0.5rem; scrollbar-width: none; -webkit-overflow-scrolling: touch; width: 100%;">
+            `;
+            data.products.forEach(p => {
+                productsHTML += `
+                    <div class="chatbot-product-card" style="flex-shrink: 0; width: 140px; background: white; border: 1.5px solid var(--border-color, #f1e1e1); border-radius: 12px; overflow: hidden; display: flex; flex-direction: column; box-shadow: 0 2px 8px rgba(0,0,0,0.03); transition: all 0.3s ease;">
+                        <img src="${p.image}" style="width: 100%; height: 90px; object-fit: cover;" alt="${p.name}">
+                        <div style="padding: 0.5rem; display: flex; flex-direction: column; flex-grow: 1; justify-content: space-between;">
+                            <div>
+                                <h5 style="margin: 0 0 0.2rem; font-size: 0.75rem; font-weight: 600; color: var(--text-main); display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden;">${escapeHTML(p.name)}</h5>
+                                <span style="font-size: 0.75rem; font-weight: 700; color: var(--primary-color, #f7a8b8);">฿${p.price.toLocaleString('th-TH', {minimumFractionDigits: 2})}</span>
+                            </div>
+                            <a href="product.php?id=${p.id}" class="chatbot-product-btn" style="display: block; width: 100%; text-align: center; background-color: var(--primary-color, #f7a8b8); color: white; border-radius: 6px; padding: 0.25rem 0; font-size: 0.7rem; font-weight: 600; text-decoration: none; margin-top: 0.4rem; transition: background-color 0.2s;">สั่งซื้อ</a>
+                        </div>
+                    </div>
+                `;
+            });
+            productsHTML += `</div>`;
+            messagesContainer.insertAdjacentHTML('beforeend', productsHTML);
+        }
+        
         scrollChatToBottom();
         
         // Save to Session History
