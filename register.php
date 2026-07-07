@@ -14,9 +14,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $username = trim($_POST['username'] ?? '');
     $password = $_POST['password'] ?? '';
     $confirm_password = $_POST['confirm_password'] ?? '';
-    $email = trim($_POST['email'] ?? '');
-    $phone = trim($_POST['phone'] ?? '');
-    $address = trim($_POST['address'] ?? '');
 
     if (empty($username) || empty($password)) {
         $error_msg = 'กรุณากรอกชื่อผู้ใช้งานและรหัสผ่าน';
@@ -32,10 +29,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             if ($stmt->fetch()) {
                 $error_msg = 'ชื่อผู้ใช้งานนี้ถูกใช้ไปแล้ว กรุณาเลือกชื่ออื่น';
             } else {
-                // Insert new user
+                // Insert new user (passing null/empty for email, phone, and address)
                 $hashed_password = password_hash($password, PASSWORD_DEFAULT);
-                $stmt_insert = $pdo->prepare("INSERT INTO users (username, password, email, phone, address) VALUES (?, ?, ?, ?, ?)");
-                if ($stmt_insert->execute([$username, $hashed_password, $email, $phone, $address])) {
+                $stmt_insert = $pdo->prepare("INSERT INTO users (username, password, email, phone, address) VALUES (?, ?, '', '', '')");
+                if ($stmt_insert->execute([$username, $hashed_password])) {
                     $success_msg = 'สมัครสมาชิกสำเร็จ! กำลังนำคุณไปยังหน้าเข้าสู่ระบบ...';
                     echo "<script>
                         setTimeout(function() {
@@ -74,7 +71,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             border-radius: var(--border-radius-md, 16px);
             padding: 2.5rem;
             width: 100%;
-            max-width: 450px;
+            max-width: 420px;
             box-shadow: var(--shadow-subtle, 0 4px 20px rgba(247, 168, 184, 0.08));
         }
         .auth-title {
@@ -200,18 +197,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <div class="form-group">
             <label for="confirm_password">ยืนยันรหัสผ่าน (Confirm Password) *</label>
             <input type="password" id="confirm_password" name="confirm_password" class="form-control" placeholder="กรอกรหัสผ่านอีกครั้ง" required autocomplete="new-password">
-        </div>
-        <div class="form-group">
-            <label for="email">อีเมล (Email)</label>
-            <input type="email" id="email" name="email" class="form-control" placeholder="เช่น customer@example.com" autocomplete="email">
-        </div>
-        <div class="form-group">
-            <label for="phone">เบอร์โทรศัพท์ (Phone)</label>
-            <input type="tel" id="phone" name="phone" class="form-control" placeholder="เช่น 0891234567" autocomplete="tel">
-        </div>
-        <div class="form-group">
-            <label for="address">ที่อยู่จัดส่งเริ่มต้น (Default Delivery Address)</label>
-            <textarea id="address" name="address" class="form-control" rows="3" placeholder="ระบุบ้านเลขที่, ถนน, แขวง, เขต, จังหวัด และรหัสไปรษณีย์"></textarea>
         </div>
         
         <button type="submit" class="btn-auth">สมัครสมาชิก 🍰</button>
