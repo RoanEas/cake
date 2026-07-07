@@ -1,5 +1,11 @@
 <?php
 require_once 'config.php';
+
+// Redirect to login if user session is not set
+if (!isset($_SESSION['user_id'])) {
+    header("Location: login.php?redirect=checkout.php&require_login=1");
+    exit;
+}
 ?>
 <!DOCTYPE html>
 <html lang="th">

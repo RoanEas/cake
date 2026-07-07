@@ -3,7 +3,8 @@ require_once 'config.php';
 
 // Redirect if already logged in
 if (isset($_SESSION['user_id'])) {
-    header("Location: index.php");
+    $redirect_target = !empty($_GET['redirect']) ? $_GET['redirect'] : 'index.php';
+    header("Location: " . $redirect_target);
     exit;
 }
 
@@ -12,6 +13,8 @@ $success_msg = '';
 
 if (isset($_GET['registered'])) {
     $success_msg = 'สมัครสมาชิกสำเร็จ! กรุณาเข้าสู่ระบบด้วยบัญชีของคุณค่ะ 🍰';
+} elseif (isset($_GET['require_login'])) {
+    $error_msg = 'กรุณาเข้าสู่ระบบก่อนดำเนินการสั่งซื้อสินค้าค่ะ 🍰';
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -35,9 +38,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $_SESSION['user_address'] = $user['address'];
                 
                 $success_msg = 'เข้าสู่ระบบสำเร็จ! ยินดีต้อนรับกลับนะคะ...';
+                $redirect_target = !empty($_GET['redirect']) ? $_GET['redirect'] : 'index.php';
                 echo "<script>
                     setTimeout(function() {
-                        window.location.href = 'index.php';
+                        window.location.href = '" . addslashes($redirect_target) . "';
                     }, 1000);
                 </script>";
             } else {
