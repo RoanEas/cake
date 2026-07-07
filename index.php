@@ -12,6 +12,10 @@ $products = $stmt->fetchAll(PDO::FETCH_ASSOC);
 // Fetch categories for dynamic tabs
 $stmt_cats = $pdo->query("SELECT * FROM categories ORDER BY id ASC");
 $categories = $stmt_cats->fetchAll(PDO::FETCH_ASSOC);
+
+// Parse LINE link
+$clean_line_id = ltrim($theme_delivery_line ?? 'NIGHTCAKE', '@');
+$line_url = "https://line.me/R/ti/p/@" . $clean_line_id;
 ?>
 <!DOCTYPE html>
 <html lang="th">
@@ -155,7 +159,7 @@ $categories = $stmt_cats->fetchAll(PDO::FETCH_ASSOC);
             <p id="editable-hero-p" <?= isset($_GET['customizer_preview']) ? 'contenteditable="true" class="editable-text-field"' : '' ?>><?= $theme_hero_p ?></p>
             <div class="hero-buttons">
                 <a href="#products" class="btn">สั่งซื้อเค้กเลย</a>
-                <a href="https://line.me" target="_blank" class="btn btn-secondary btn-line">สั่งซื้อทาง Line: @NIGHTCAKE</a>
+                <a href="<?= htmlspecialchars($line_url) ?>" target="_blank" class="btn btn-secondary btn-line">สั่งซื้อทาง Line: <?= htmlspecialchars($theme_delivery_line) ?></a>
             </div>
         </div>
         <div class="hero-image-container hero-slider">
@@ -384,7 +388,7 @@ $categories = $stmt_cats->fetchAll(PDO::FETCH_ASSOC);
                         <span id="editable-delivery-hours" <?= isset($_GET['customizer_preview']) ? 'contenteditable="true" class="editable-text-field"' : '' ?>><?= $theme_delivery_hours ?></span>
                     </div>
                 </div>
-                <a href="https://line.me" target="_blank" class="btn btn-secondary btn-line" style="box-shadow: none;">
+                <a href="<?= htmlspecialchars($line_url) ?>" target="_blank" class="btn btn-secondary btn-line" style="box-shadow: none;">
                     <span id="editable-delivery-btn" <?= isset($_GET['customizer_preview']) ? 'contenteditable="true" class="editable-text-field"' : '' ?> style="outline: none;"><?= $theme_delivery_btn ?></span>
                 </a>
             </div>
