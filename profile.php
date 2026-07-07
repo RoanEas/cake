@@ -169,19 +169,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 
 // Avatar image display helper
-$avatar_url = !empty($user['profile_pic']) && file_exists($user['profile_pic']) ? $user['profile_pic'] : 'images/default-avatar.png';
-// Create default avatar placeholder if not exists
-if (!file_exists('images/default-avatar.png')) {
-    if (!file_exists('images')) mkdir('images', 0777, true);
-    // Create simple pink circle avatar
-    $im = imagecreatetruecolor(150, 150);
-    $bg = imagecolorallocate($im, 255, 230, 235);
-    $pink = imagecolorallocate($im, 247, 168, 184);
-    imagefilledrectangle($im, 0, 0, 150, 150, $bg);
-    imagefilledellipse($im, 75, 75, 120, 120, $pink);
-    imagepng($im, 'images/default-avatar.png');
-    imagedestroy($im);
-}
+$avatar_url = !empty($user['profile_pic']) && file_exists($user['profile_pic']) ? $user['profile_pic'] : 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="150" height="150"><circle cx="50" cy="50" r="50" fill="%23ffe6eb"/><circle cx="50" cy="40" r="20" fill="%23f7a8b8"/><path d="M20 80c0-15 15-25 30-25s30 10 30 25z" fill="%23f7a8b8"/></svg>';
 ?>
 <!DOCTYPE html>
 <html lang="th">
