@@ -148,6 +148,12 @@ try {
             $pdo->exec("ALTER TABLE orders ADD COLUMN trans_ref VARCHAR(100) DEFAULT NULL");
         }
 
+        // Add is_archived column to orders table if not exists
+        $stmt = $pdo->query("SHOW COLUMNS FROM orders LIKE 'is_archived'");
+        if (!$stmt->fetch()) {
+            $pdo->exec("ALTER TABLE orders ADD COLUMN is_archived TINYINT(1) NOT NULL DEFAULT 0");
+        }
+
         // Create reviews table if not exists
         $pdo->exec("CREATE TABLE IF NOT EXISTS reviews (
             id INT(11) NOT NULL AUTO_INCREMENT,
