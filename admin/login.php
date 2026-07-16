@@ -137,8 +137,7 @@ if($_SERVER['REQUEST_METHOD'] == 'POST') {
             </button>
         </form>
 
-        <div class="login-footer" style="display: flex; justify-content: space-between;">
-            <a href="register.php">สมัครสมาชิกแอดมิน</a>
+        <div class="login-footer">
             <a href="../index.php">← กลับหน้าแรก</a>
         </div>
     </div>
