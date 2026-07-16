@@ -1,41 +1,6 @@
 <?php
 include_once 'header.php';
 
-// Handle admin registration within the dashboard
-$reg_error = '';
-$reg_success = '';
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['register_admin_index'])) {
-    $reg_username = trim($_POST['reg_username'] ?? '');
-    $reg_password = $_POST['reg_password'] ?? '';
-    $reg_confirm = $_POST['reg_confirm_password'] ?? '';
-
-    if (empty($reg_username) || empty($reg_password)) {
-        $reg_error = "กรุณากรอกข้อมูลให้ครบถ้วน";
-    } elseif ($reg_password !== $reg_confirm) {
-        $reg_error = "รหัสผ่านและยืนยันรหัสผ่านไม่ตรงกัน";
-    } elseif (strlen($reg_password) < 6) {
-        $reg_error = "รหัสผ่านต้องมีความยาวอย่างน้อย 6 ตัวอักษร";
-    } else {
-        try {
-            $stmt = $pdo->prepare("SELECT id FROM admin WHERE username = ?");
-            $stmt->execute([$reg_username]);
-            if ($stmt->fetch()) {
-                $reg_error = "ชื่อผู้ใช้งาน '$reg_username' นี้มีในระบบแล้ว";
-            } else {
-                $hashed = password_hash($reg_password, PASSWORD_DEFAULT);
-                $stmt_ins = $pdo->prepare("INSERT INTO admin (username, password, role) VALUES (?, ?, 'admin')");
-                if ($stmt_ins->execute([$reg_username, $hashed])) {
-                    $reg_success = "สมัครสมาชิกผู้ดูแลระบบใหม่ '$reg_username' สำเร็จเรียบร้อยแล้วค่ะ! 🎉";
-                } else {
-                    $reg_error = "เกิดข้อผิดพลาดในการบันทึกข้อมูล";
-                }
-            }
-        } catch (PDOException $e) {
-            $reg_error = "เกิดข้อผิดพลาดทางเทคนิค: " . $e->getMessage();
-        }
-    }
-}
-
 // Calculate Dashboard Stats
 $total_orders = $pdo->query("SELECT COUNT(*) FROM orders")->fetchColumn();
 $total_products = $pdo->query("SELECT COUNT(*) FROM products")->fetchColumn();
@@ -94,15 +59,12 @@ $archived_orders = $stmt_archived->fetchAll(PDO::FETCH_ASSOC);
 <?php endif; ?>
 
 <!-- Tabs navigation for Active Orders & Delivery History -->
-<div class="tabs-navigation" style="display: flex; gap: 0.5rem; border-bottom: 2px solid var(--border-color); margin-bottom: 1.5rem; padding-bottom: 0.25rem; flex-wrap: wrap;">
+<div class="tabs-navigation" style="display: flex; gap: 0.5rem; border-bottom: 2px solid var(--border-color); margin-bottom: 1.5rem; padding-bottom: 0.25rem;">
     <button onclick="switchTab('active')" id="tab-active-btn" class="tab-btn" style="background: none; border: none; font-family: inherit; font-size: 0.95rem; font-weight: 600; color: var(--primary-hover); border-bottom: 3px solid var(--primary-color); padding: 0.6rem 1.2rem; cursor: pointer; transition: var(--transition);">
         🎂 รายการสั่งซื้อใหม่ / รอจัดส่ง
     </button>
     <button onclick="switchTab('archived')" id="tab-archived-btn" class="tab-btn" style="background: none; border: none; font-family: inherit; font-size: 0.95rem; font-weight: 600; color: var(--text-light); border-bottom: 3px solid transparent; padding: 0.6rem 1.2rem; cursor: pointer; transition: var(--transition);">
         📦 ประวัติการจัดส่งทั้งหมด
-    </button>
-    <button onclick="switchTab('register-admin')" id="tab-register-admin-btn" class="tab-btn" style="background: none; border: none; font-family: inherit; font-size: 0.95rem; font-weight: 600; color: var(--text-light); border-bottom: 3px solid transparent; padding: 0.6rem 1.2rem; cursor: pointer; transition: var(--transition);">
-        👥 สมัครสมาชิกแอดมินใหม่
     </button>
 </div>
 
@@ -312,93 +274,33 @@ $archived_orders = $stmt_archived->fetchAll(PDO::FETCH_ASSOC);
     </div>
 </div>
 
-<!-- 3. Register Admin Card -->
-<div class="admin-card" id="register-admin-card" style="display: none; max-width: 500px; margin: 0 auto 2rem auto; padding: 2.5rem 2rem; border-radius: 12px; border: 1.5px solid var(--border-color); background-color: var(--card-bg);">
-    <h3 style="font-family: var(--font-serif); font-size: 1.6rem; font-weight: 700; color: var(--text-main); margin-bottom: 0.5rem; text-align: center; display: flex; align-items: center; justify-content: center; gap: 0.6rem;">
-        👥 สมัครสมาชิกแอดมินใหม่
-    </h3>
-    <p style="font-size: 0.82rem; color: var(--text-muted); text-align: center; margin-bottom: 2rem;">เพิ่มบัญชีผู้ดูแลระบบชุดใหม่เพื่อร่วมดูแลร้านหลังบ้าน</p>
-    
-    <?php if($reg_error): ?>
-        <div style="background-color: #fef2f2; color: #c81e1e; border: 1px solid #fbd5d5; padding: 0.75rem 1rem; border-radius: var(--border-radius-sm); margin-bottom: 1.5rem; font-size: 0.85rem; font-weight: 500; text-align: center;">
-            ⚠️ <?= htmlspecialchars($reg_error) ?>
-        </div>
-    <?php endif; ?>
-    
-    <?php if($reg_success): ?>
-        <div style="background-color: #f0fdf4; color: #15803d; border: 1px solid #bbf7d0; padding: 0.75rem 1rem; border-radius: var(--border-radius-sm); margin-bottom: 1.5rem; font-size: 0.85rem; font-weight: 500; text-align: center;">
-            ✅ <?= htmlspecialchars($reg_success) ?>
-        </div>
-    <?php endif; ?>
-
-    <form method="POST" id="admin-reg-form">
-        <input type="hidden" name="register_admin_index" value="1">
-        <div class="admin-form-group" style="text-align: left; margin-bottom: 1.2rem;">
-            <label style="display:block; margin-bottom: 0.5rem; font-weight:600; font-size: 0.85rem; color: var(--text-main);">ชื่อผู้ใช้งาน (Username) *</label>
-            <input type="text" name="reg_username" class="admin-form-control" placeholder="ระบุชื่อแอดมินใหม่" required autocomplete="username" style="width: 100%; box-sizing: border-box; padding: 0.7rem; border-radius: 8px; border: 1.5px solid var(--border-color); background-color: var(--secondary-color); font-family: inherit;">
-        </div>
-        <div class="admin-form-group" style="text-align: left; margin-bottom: 1.2rem;">
-            <label style="display:block; margin-bottom: 0.5rem; font-weight:600; font-size: 0.85rem; color: var(--text-main);">รหัสผ่าน (Password) *</label>
-            <input type="password" name="reg_password" class="admin-form-control" placeholder="••••••••" required autocomplete="new-password" style="width: 100%; box-sizing: border-box; padding: 0.7rem; border-radius: 8px; border: 1.5px solid var(--border-color); background-color: var(--secondary-color); font-family: inherit;">
-        </div>
-        <div class="admin-form-group" style="text-align: left; margin-bottom: 1.8rem;">
-            <label style="display:block; margin-bottom: 0.5rem; font-weight:600; font-size: 0.85rem; color: var(--text-main);">ยืนยันรหัสผ่าน *</label>
-            <input type="password" name="reg_confirm_password" class="admin-form-control" placeholder="••••••••" required autocomplete="new-password" style="width: 100%; box-sizing: border-box; padding: 0.7rem; border-radius: 8px; border: 1.5px solid var(--border-color); background-color: var(--secondary-color); font-family: inherit;">
-        </div>
-        <button type="submit" class="admin-btn admin-btn-primary" style="width: 100%; justify-content: center; padding: 0.85rem; font-size: 0.95rem; font-weight: 600; border-radius: 8px; cursor: pointer; border: none; background-color: var(--primary-color); color: white; transition: background-color 0.2s;">
-            ลงทะเบียนแอดมินใหม่ 🎂
-        </button>
-    </form>
-</div>
-
 <script>
 function switchTab(tab) {
     const activeCard = document.getElementById('active-orders-card');
     const archivedCard = document.getElementById('archived-orders-card');
-    const registerCard = document.getElementById('register-admin-card');
-    
     const activeBtn = document.getElementById('tab-active-btn');
     const archivedBtn = document.getElementById('tab-archived-btn');
-    const registerBtn = document.getElementById('tab-register-admin-btn');
-    
-    // Hide all
-    activeCard.style.display = 'none';
-    archivedCard.style.display = 'none';
-    if (registerCard) registerCard.style.display = 'none';
-    
-    // Reset buttons
-    activeBtn.style.color = 'var(--text-light)';
-    activeBtn.style.borderBottomColor = 'transparent';
-    archivedBtn.style.color = 'var(--text-light)';
-    archivedBtn.style.borderBottomColor = 'transparent';
-    if (registerBtn) {
-        registerBtn.style.color = 'var(--text-light)';
-        registerBtn.style.borderBottomColor = 'transparent';
-    }
     
     if (tab === 'active') {
         activeCard.style.display = 'block';
+        archivedCard.style.display = 'none';
+        
         activeBtn.style.color = 'var(--primary-hover)';
         activeBtn.style.borderBottomColor = 'var(--primary-color)';
-    } else if (tab === 'archived') {
+        
+        archivedBtn.style.color = 'var(--text-light)';
+        archivedBtn.style.borderBottomColor = 'transparent';
+    } else {
+        activeCard.style.display = 'none';
         archivedCard.style.display = 'block';
+        
         archivedBtn.style.color = 'var(--primary-hover)';
         archivedBtn.style.borderBottomColor = 'var(--primary-color)';
-    } else if (tab === 'register-admin') {
-        if (registerCard) registerCard.style.display = 'block';
-        if (registerBtn) {
-            registerBtn.style.color = 'var(--primary-hover)';
-            registerBtn.style.borderBottomColor = 'var(--primary-color)';
-        }
+        
+        activeBtn.style.color = 'var(--text-light)';
+        activeBtn.style.borderBottomColor = 'transparent';
     }
 }
-
-// Automatically switch to the register tab if form was posted with messages
-<?php if (isset($_POST['register_admin_index'])): ?>
-document.addEventListener("DOMContentLoaded", function() {
-    switchTab('register-admin');
-});
-<?php endif; ?>
 </script>
 
 <!-- Receipt Modal -->

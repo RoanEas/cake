@@ -45,6 +45,9 @@ $current_page = basename($_SERVER['PHP_SELF']);
             <li class="<?= $current_page == 'customize_theme.php' ? 'active' : '' ?>">
                 <a href="customize_theme.php"><span class="menu-icon">🎨</span> ปรับแต่งหน้าเว็บ</a>
             </li>
+            <li class="<?= $current_page == 'admins.php' ? 'active' : '' ?>">
+                <a href="admins.php"><span class="menu-icon">👥</span> ผู้ดูแลระบบ</a>
+            </li>
         </ul>
 
         <div class="sidebar-footer">
@@ -65,6 +68,7 @@ $current_page = basename($_SERVER['PHP_SELF']);
                     elseif($current_page == 'categories.php') echo 'จัดการหมวดหมู่สินค้า';
                     elseif($current_page == 'settings.php') echo 'ตั้งค่าระบบการแจ้งเตือน';
                     elseif($current_page == 'customize_theme.php') echo 'ปรับแต่งธีมหน้าแรก (Live Customizer)';
+                    elseif($current_page == 'admins.php') echo 'จัดการบัญชีผู้ดูแลระบบ (Admins)';
                     else echo 'ระบบจัดการ';
                 ?>
             </div>
