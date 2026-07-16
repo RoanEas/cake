@@ -18,14 +18,23 @@ $current_page = basename($_SERVER['PHP_SELF']);
 </head>
 <body>
 
+<!-- Mobile Sidebar Overlay -->
+<div class="admin-sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
+
 <div class="admin-wrapper">
     <!-- Sidebar -->
-    <aside class="admin-sidebar">
+    <aside class="admin-sidebar" id="adminSidebar">
         <div class="sidebar-brand">
             <div>
                 <div class="sidebar-brand-text">NightCake<span>.</span></div>
                 <div class="sidebar-brand-sub">ระบบจัดการหลังบ้าน</div>
             </div>
+            <!-- Close button inside drawer (mobile only) -->
+            <button class="admin-hamburger is-open" id="sidebarCloseBtn" onclick="closeSidebar()" aria-label="ปิดเมนู" style="display:none;">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
         </div>
 
         <div class="sidebar-section-label">เมนูหลัก</div>
@@ -59,6 +68,13 @@ $current_page = basename($_SERVER['PHP_SELF']);
     <!-- Main Content Area -->
     <div class="admin-main">
         <header class="admin-header">
+            <!-- Hamburger button (visible on mobile only via CSS) -->
+            <button class="admin-hamburger" id="hamburgerBtn" onclick="openSidebar()" aria-label="เปิดเมนู">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+
             <div class="admin-header-title">
                 <?php
                     if($current_page == 'index.php') echo 'แดชบอร์ดและคำสั่งซื้อล่าสุด';
@@ -77,3 +93,47 @@ $current_page = basename($_SERVER['PHP_SELF']);
             </div>
         </header>
         <div class="admin-body">
+
+<script>
+/* ============ Mobile Sidebar Drawer JS ============
+   Works ONLY when screen ≤ 991px (CSS hides the hamburger on PC).
+   No effect on desktop layout whatsoever.
+============================================== */
+const sidebar      = document.getElementById('adminSidebar');
+const overlay      = document.getElementById('sidebarOverlay');
+const hamburgerBtn = document.getElementById('hamburgerBtn');
+const closeBtn     = document.getElementById('sidebarCloseBtn');
+
+function openSidebar() {
+    sidebar.classList.add('is-open');
+    overlay.classList.add('is-visible');
+    hamburgerBtn.classList.add('is-open');
+    document.body.style.overflow = 'hidden'; // prevent background scroll
+    // Show close button inside drawer
+    if (closeBtn) closeBtn.style.display = 'flex';
+}
+
+function closeSidebar() {
+    sidebar.classList.remove('is-open');
+    overlay.classList.remove('is-visible');
+    hamburgerBtn.classList.remove('is-open');
+    document.body.style.overflow = '';
+    if (closeBtn) closeBtn.style.display = 'none';
+}
+
+// Close sidebar on ESC key
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') closeSidebar();
+});
+
+// On resize: if going back to desktop, always close/reset
+window.addEventListener('resize', function() {
+    if (window.innerWidth > 991) {
+        sidebar.classList.remove('is-open');
+        overlay.classList.remove('is-visible');
+        hamburgerBtn.classList.remove('is-open');
+        document.body.style.overflow = '';
+        if (closeBtn) closeBtn.style.display = 'none';
+    }
+});
+</script>
